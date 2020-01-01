@@ -3,8 +3,35 @@
   "version": "0.0.1",
   "description": "hackable browser based bundler inspired from webpack",
   "main": "main.js",
+  "scripts": {
+    "dev": "parcel ./index.html",
+    "prettify": "prettier --write",
+    "lint": "eslint . --fix",
+    "lint:staged": "eslint --fix"
+  },
   "repository": "https://github.com/ameerthehacker/browser-bundler.git",
   "author": "ameerthehacker",
   "license": "apache",
-  "private": false
+  "private": false,
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.5.0",
+    "parcel": "^1.12.4"
+  },
+  "lint-staged": {
+    "*.{js,ts,html,json,scss,css,md,yml}": [
+      "yarn prettify",
+      "git add"
+    ],
+    "*.{spec,js}": [
+      "yarn lint:staged",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
 }
