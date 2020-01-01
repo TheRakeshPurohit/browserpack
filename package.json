@@ -1,0 +1,10 @@
+{
+  "name": "browser-bundler",
+  "version": "0.0.1",
+  "description": "hackable browser based bundler inspired from webpack",
+  "main": "main.js",
+  "repository": "https://github.com/ameerthehacker/browser-bundler.git",
+  "author": "ameerthehacker",
+  "license": "apache",
+  "private": false
+}
