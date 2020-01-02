@@ -6,9 +6,10 @@ class Bundler {
     this.files = config.files || [];
     this.defaultExt = config.defaultExt || "js";
     this.rules = config.rules || [];
+    this.transpiledFiles = {};
   }
 
-  transpile(sourceFile) {
+  async transpile(sourceFile) {
     let source = this.files[sourceFile];
 
     if (source === undefined) {
@@ -16,13 +17,20 @@ class Bundler {
     }
 
     try {
+      let hasLoader = false;
+
       for (const rule of this.rules) {
         if (rule.test.test(sourceFile)) {
-          this.runLoaders(source, rule.loaders).then(transpiledCode => {
-            console.log(transpiledCode);
-          });
+          hasLoader = true;
+          source = await this.runLoaders(source, rule.loaders);
         }
       }
+
+      if (!hasLoader) {
+        throw new Error(`${name}: no loader found for file ${sourceFile}`);
+      }
+
+      return source;
     } catch (err) {
       throw new Error(`${name}: ${err}`);
     }
@@ -60,7 +68,31 @@ class Bundler {
       );
     }
 
-    return this.transpile(this.entryPoint);
+    // find the dep tree
+    const depResolverWorker = new Worker("./dep-resolver.js");
+
+    depResolverWorker.postMessage({
+      entryPoint: this.entryPoint,
+      files: this.files
+    });
+
+    return new Promise((resolve, reject) => {
+      depResolverWorker.addEventListener("message", async evt => {
+        try {
+          const { depTree } = evt.data;
+
+          for (const file in depTree) {
+            this.transpiledFiles[file] = await this.transpile(file);
+          }
+
+          depResolverWorker.terminate();
+
+          resolve(this.transpiledFiles);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
   }
 }
 

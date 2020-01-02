@@ -1,5 +1,5 @@
 import Bundler from "../../index";
-import { babelLoader } from "../loaders";
+import { babelLoader } from "../loaders/babel";
 
 const mainjs = `
   import { hello } from './hello.js';
@@ -15,7 +15,8 @@ const hellojs = `
 
 const files = {
   "main.js": mainjs,
-  "./hello.js": hellojs
+  "./hello.js": hellojs,
+  "./help.js": "const a = 2;"
 };
 
 const bundler = new Bundler({
@@ -30,4 +31,4 @@ const bundler = new Bundler({
   ]
 });
 
-bundler.bundle();
+bundler.bundle().then(output => console.log(output));
