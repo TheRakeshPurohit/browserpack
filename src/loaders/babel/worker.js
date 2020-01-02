@@ -1,5 +1,5 @@
 import { transformSync } from '@babel/core';
-import es2015 from 'babel-preset-es2015';
+import presetEnv from '@babel/preset-env';
 
 self.addEventListener('message', (evt) => {
   try {
@@ -7,7 +7,7 @@ self.addEventListener('message', (evt) => {
 
     const result = transformSync(source, {
       ...options,
-      presets: [es2015],
+      presets: [presetEnv],
       ast: true
     });
 
