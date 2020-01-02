@@ -5,10 +5,10 @@ class Bundler {
     this.entryPoint = config.entry || "index.js";
     this.files = config.files || [];
     this.defaultExt = config.defaultExt || "js";
-    this.loaders = config.loaders || [];
+    this.rules = config.rules || [];
   }
 
-  parse(sourceFile) {
+  transpile(sourceFile) {
     let source = this.files[sourceFile];
 
     if (source === undefined) {
@@ -16,34 +16,39 @@ class Bundler {
     }
 
     try {
-      for (const loader of this.loaders) {
-        if (loader.test.test(sourceFile)) {
-          const loaderFn = loader.loader;
-
-          console.log(`${loaderFn} parsing ${sourceFile}`);
-
-          if (loaderFn === undefined || typeof loaderFn !== "function") {
-            throw new Error(`${name}: unable to find loader ${loader.loader}`);
-          }
-
-          // stub commonjs exports and require
-          /* eslint-disable no-undef */
-          require = module => this.parse(module);
-          /* eslint-disable no-undef */
-          exports = {};
-          /* eslint-disable no-undef */
-          module = { exports };
-
-          source = loaderFn(source, loader.options).code;
-
-          eval(source);
+      for (const rule of this.rules) {
+        if (rule.test.test(sourceFile)) {
+          this.runLoaders(source, rule.loaders).then(transpiledCode => {
+            console.log(transpiledCode);
+          });
         }
       }
-
-      return module.exports;
     } catch (err) {
       throw new Error(`${name}: ${err}`);
     }
+  }
+
+  runLoader(source, loader) {
+    if (loader === undefined || typeof loader !== "function") {
+      throw new Error(`${name}: unable to find loader ${loader}`);
+    }
+
+    return loader(source);
+  }
+
+  runLoaders(source, loaders) {
+    /* eslint-disable no-async-promise-executor */
+    return new Promise(async (resolve, reject) => {
+      try {
+        for (const loader of loaders) {
+          source = await this.runLoader(source, loader);
+        }
+      } catch (err) {
+        reject(err);
+      }
+
+      resolve(source);
+    });
   }
 
   bundle() {
@@ -55,7 +60,7 @@ class Bundler {
       );
     }
 
-    return this.parse(this.entryPoint);
+    return this.transpile(this.entryPoint);
   }
 }
 

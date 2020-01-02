@@ -1,6 +1,5 @@
 import Bundler from "../../index";
 import { babelLoader } from "../loaders";
-import es2015 from "babel-preset-es2015";
 
 const mainjs = `
   import { hello } from './hello.js';
@@ -23,13 +22,10 @@ const bundler = new Bundler({
   entry: "main.js",
   files,
   defaultExt: "js",
-  loaders: [
+  rules: [
     {
       test: /\.js?$/,
-      loader: babelLoader,
-      options: {
-        presets: [es2015]
-      }
+      loaders: [babelLoader]
     }
   ]
 });

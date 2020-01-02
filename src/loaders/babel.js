@@ -1,5 +1,22 @@
-import { transformSync } from "@babel/core";
+export default function(source, options) {
+  const worker = new Worker("./worker.js");
 
-export default function loaderFn(source, options) {
-  return transformSync(source, options);
+  return new Promise((resolve, reject) => {
+    worker.postMessage({
+      source,
+      options
+    });
+
+    worker.addEventListener("message", evt => {
+      const { err, code } = evt.data;
+
+      if (!err) {
+        resolve(code);
+      } else {
+        reject(err);
+      }
+
+      worker.terminate();
+    });
+  });
 }
