@@ -1,16 +1,24 @@
 import Bundler from '../../index';
 import { babelLoader } from '../loaders/babel';
 import { jsonLoader } from '../loaders/json';
+import { cssLoader } from '../loaders/css';
 
 const userJSON = `{
   "name": "Ameer",
   "location": "Bengaluru"}
 `;
 
+const indexCss = `{
+ h1 {
+   color: red;
+ }
+}`;
+
 const mainjs = `
   import { hello } from './hello.js';
   import { welcome } from './modules/welcome.js';
   import JSON from './jsons/user.json';
+  import './css/index.css';
   
   hello();
   welcome('Ameer');
@@ -31,6 +39,7 @@ const welcomejs = `
 
 const files = {
   'main.js': mainjs,
+  './css/index.css': indexCss,
   './hello.js': hellojs,
   './modules/welcome.js': welcomejs,
   './jsons/user.json': userJSON
@@ -48,6 +57,10 @@ const bundler = new Bundler({
     {
       test: /\.json?$/,
       loaders: [jsonLoader, babelLoader]
+    },
+    {
+      test: /\.css?$/,
+      loaders: [cssLoader]
     }
   ]
 });
