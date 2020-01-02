@@ -1,4 +1,4 @@
-# Browser Bundler
+# Browserpack
 
 ## Motivation
 

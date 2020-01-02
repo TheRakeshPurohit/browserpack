@@ -1,5 +1,5 @@
 {
-  "name": "browser-bundler",
+  "name": "browserpack",
   "version": "0.0.1",
   "description": "hackable browser based bundler inspired from webpack",
   "main": "index.js",
