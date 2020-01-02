@@ -1,11 +1,11 @@
-import { name } from "../../package.json";
-import evaluate from "./eval";
+import { name } from '../../package.json';
+import evaluate from './eval';
 
 class Bundler {
   constructor(config) {
-    this.entryPoint = config.entry || "index.js";
+    this.entryPoint = config.entry || 'index.js';
     this.files = config.files || [];
-    this.defaultExt = config.defaultExt || "js";
+    this.defaultExt = config.defaultExt || 'js';
     this.rules = config.rules || [];
     this.transpiledFiles = {};
   }
@@ -38,7 +38,7 @@ class Bundler {
   }
 
   runLoader(source, loader) {
-    if (loader === undefined || typeof loader !== "function") {
+    if (loader === undefined || typeof loader !== 'function') {
       throw new Error(`${name}: unable to find loader ${loader}`);
     }
 
@@ -70,7 +70,7 @@ class Bundler {
     }
 
     // find the dep tree
-    const depResolverWorker = new Worker("./dep-resolver.js");
+    const depResolverWorker = new Worker('./dep-resolver.js');
 
     depResolverWorker.postMessage({
       entryPoint: this.entryPoint,
@@ -78,7 +78,7 @@ class Bundler {
     });
 
     return new Promise((resolve, reject) => {
-      depResolverWorker.addEventListener("message", async evt => {
+      depResolverWorker.addEventListener('message', async (evt) => {
         try {
           const { depTree } = evt.data;
 

@@ -1,5 +1,5 @@
 export default function(source, options) {
-  const worker = new Worker("./worker.js");
+  const worker = new Worker('./worker.js');
 
   return new Promise((resolve, reject) => {
     worker.postMessage({
@@ -7,7 +7,7 @@ export default function(source, options) {
       options
     });
 
-    worker.addEventListener("message", evt => {
+    worker.addEventListener('message', (evt) => {
       const { err, code } = evt.data;
 
       if (!err) {

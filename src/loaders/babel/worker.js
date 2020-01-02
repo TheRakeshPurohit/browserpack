@@ -1,7 +1,7 @@
-import { transformSync } from "@babel/core";
-import es2015 from "babel-preset-es2015";
+import { transformSync } from '@babel/core';
+import es2015 from 'babel-preset-es2015';
 
-self.addEventListener("message", evt => {
+self.addEventListener('message', (evt) => {
   try {
     const { source, options } = evt.data;
 
@@ -13,6 +13,6 @@ self.addEventListener("message", evt => {
 
     self.postMessage({ err: false, code: result.code, ast: result.ast });
   } catch (err) {
-    self.postMessage({ err, code: "", ast: "" });
+    self.postMessage({ err, code: '', ast: '' });
   }
 });

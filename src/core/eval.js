@@ -1,6 +1,6 @@
 export default function evaluate(file, files) {
   /* eslint-disable no-undef */
-  require = module => evaluate(module, files);
+  require = (module) => evaluate(module, files);
   /* eslint-disable no-undef */
   exports = {};
   /* eslint-disable no-undef */

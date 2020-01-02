@@ -1,3 +1,3 @@
-import babelLoader from "./babel";
+import babelLoader from './babel';
 
 export { babelLoader };

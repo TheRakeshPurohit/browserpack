@@ -1,5 +1,5 @@
-import Bundler from "../../index";
-import { babelLoader } from "../loaders/babel";
+import Bundler from '../../index';
+import { babelLoader } from '../loaders/babel';
 
 const mainjs = `
   import { hello, welcome } from './hello.js';
@@ -25,15 +25,15 @@ const welcomejs = `
 `;
 
 const files = {
-  "main.js": mainjs,
-  "./hello.js": hellojs,
-  "./modules/welcome.js": welcomejs
+  'main.js': mainjs,
+  './hello.js': hellojs,
+  './modules/welcome.js': welcomejs
 };
 
 const bundler = new Bundler({
-  entry: "main.js",
+  entry: 'main.js',
   files,
-  defaultExt: "js",
+  defaultExt: 'js',
   rules: [
     {
       test: /\.js?$/,

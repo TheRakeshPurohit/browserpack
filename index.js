@@ -1,3 +1,3 @@
-import Bundler from "./src/core";
+import Bundler from './src/core';
 
 export default Bundler;
