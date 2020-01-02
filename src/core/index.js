@@ -8,6 +8,7 @@ class Bundler {
     this.defaultExt = config.defaultExt || 'js';
     this.rules = config.rules || [];
     this.transpiledFiles = {};
+    this.plugins = config.plugins || [];
   }
 
   async transpile(sourceFile) {
@@ -89,6 +90,11 @@ class Bundler {
           depResolverWorker.terminate();
 
           evaluate(this.entryPoint, this.transpiledFiles);
+
+          // run through the plugins
+          this.plugins.forEach((plugin) => {
+            plugin(this.files);
+          });
 
           resolve();
         } catch (err) {
