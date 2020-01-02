@@ -2,21 +2,32 @@ import Bundler from "../../index";
 import { babelLoader } from "../loaders/babel";
 
 const mainjs = `
-  import { hello } from './hello.js';
+  import { hello, welcome } from './hello.js';
   
   hello();
+  welcome('Ameer');
 `;
 
 const hellojs = `
-  export function hello() {
+  import { welcome } from './modules/welcome.js';
+
+  function hello(name) {
     console.log('hello from module');
+  }
+
+  export { welcome, hello };
+`;
+
+const welcomejs = `
+  export function welcome(name) {
+    console.log(\`Welcome \${name}\`);
   }
 `;
 
 const files = {
   "main.js": mainjs,
   "./hello.js": hellojs,
-  "./help.js": "const a = 2;"
+  "./modules/welcome.js": welcomejs
 };
 
 const bundler = new Bundler({
@@ -31,4 +42,4 @@ const bundler = new Bundler({
   ]
 });
 
-bundler.bundle().then(output => console.log(output));
+bundler.bundle();

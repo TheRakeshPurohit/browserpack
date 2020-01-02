@@ -1,4 +1,5 @@
 import { name } from "../../package.json";
+import evaluate from "./eval";
 
 class Bundler {
   constructor(config) {
@@ -87,7 +88,9 @@ class Bundler {
 
           depResolverWorker.terminate();
 
-          resolve(this.transpiledFiles);
+          evaluate(this.entryPoint, this.transpiledFiles);
+
+          resolve();
         } catch (err) {
           reject(err);
         }
