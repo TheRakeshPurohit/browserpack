@@ -2,7 +2,6 @@ import Bundler from '../../index';
 import { babelLoader } from '../loaders/babel';
 import { jsonLoader } from '../loaders/json';
 import { cssLoader } from '../loaders/css';
-import { extractCssPlugin } from '../plugins/extract-css';
 
 const userJSON = `{
   "name": "Ameer",
@@ -63,8 +62,7 @@ const bundler = new Bundler({
       test: /\.css?$/,
       loaders: [cssLoader]
     }
-  ],
-  plugins: [extractCssPlugin]
+  ]
 });
 
 bundler.bundle();

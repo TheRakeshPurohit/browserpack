@@ -1,10 +1,9 @@
-export default function(source, options) {
+export default function(source) {
   const worker = new Worker('./worker.js');
 
   return new Promise((resolve, reject) => {
     worker.postMessage({
-      source,
-      options
+      source
     });
 
     worker.addEventListener('message', (evt) => {
