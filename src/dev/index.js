@@ -38,7 +38,7 @@ const welcomejs = `
 `;
 
 const files = {
-  'main.js': mainjs,
+  './main.js': mainjs,
   './css/index.css': indexCss,
   './hello.js': hellojs,
   './modules/welcome.js': welcomejs,
@@ -46,7 +46,7 @@ const files = {
 };
 
 const bundler = new Bundler({
-  entry: 'main.js',
+  entry: './main.js',
   files,
   defaultExt: 'js',
   rules: [
@@ -65,4 +65,23 @@ const bundler = new Bundler({
   ]
 });
 
-bundler.bundle();
+bundler.bundle().then(() => {
+  setTimeout(() => {
+    bundler.update(
+      './css/index.css',
+      `
+      h1{
+        color: red;
+      }
+    `
+    );
+    bundler.update(
+      './modules/welcome.js',
+      `
+      export function welcome(name) {
+        console.log(\`Welcome edited \${name}\`);
+      }
+    `
+    );
+  }, 3000);
+});

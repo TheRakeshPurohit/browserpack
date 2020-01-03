@@ -1,14 +1,13 @@
 export default function evaluate(file, files) {
+  if (!/\.js|\.json?$/.test(file)) {
+    return;
+  }
   /* eslint-disable no-undef */
   exports = {};
   /* eslint-disable no-undef */
   module = { exports };
   /* eslint-disable no-undef */
-  require = (module) => {
-    if (/\.js|\.json?$/.test(module)) {
-      return evaluate(module, files);
-    }
-  };
+  require = (module) => evaluate(module, files);
 
   eval(files[file]);
 

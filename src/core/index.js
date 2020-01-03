@@ -8,7 +8,24 @@ class Bundler {
     this.defaultExt = config.defaultExt || 'js';
     this.rules = config.rules || [];
     this.transpiledFiles = {};
+    this.depTree = {};
     this.plugins = config.plugins || [];
+  }
+
+  async update(fileName, updatedSource) {
+    this.files[fileName] = updatedSource;
+
+    // transpile and evaluate the affected file
+    this.transpiledFiles[fileName] = await this.transpile(fileName);
+    evaluate(fileName, this.transpiledFiles);
+    // transpile and evaluate the files that uses the changed file
+    const deps = this.depTree[fileName];
+
+    if (deps) {
+      deps.forEach(async (dep) => {
+        evaluate(dep, this.transpiledFiles);
+      });
+    }
   }
 
   async transpile(sourceFile) {
@@ -24,7 +41,7 @@ class Bundler {
       for (const rule of this.rules) {
         if (rule.test.test(sourceFile)) {
           hasLoader = true;
-          source = await this.runLoaders(source, rule.loaders);
+          source = await this.runLoaders(source, sourceFile, rule.loaders);
         }
       }
 
@@ -38,20 +55,20 @@ class Bundler {
     }
   }
 
-  runLoader(source, loader) {
+  runLoader(source, sourceFile, loader) {
     if (loader === undefined || typeof loader !== 'function') {
       throw new Error(`${name}: unable to find loader ${loader}`);
     }
 
-    return loader(source);
+    return loader(source, sourceFile);
   }
 
-  runLoaders(source, loaders) {
+  runLoaders(source, sourceFile, loaders) {
     /* eslint-disable no-async-promise-executor */
     return new Promise(async (resolve, reject) => {
       try {
         for (const loader of loaders) {
-          source = await this.runLoader(source, loader);
+          source = await this.runLoader(source, sourceFile, loader);
         }
       } catch (err) {
         reject(err);
@@ -81,9 +98,12 @@ class Bundler {
     return new Promise((resolve, reject) => {
       depResolverWorker.addEventListener('message', async (evt) => {
         try {
-          const { depTree } = evt.data;
+          const { filesToTranspile, depTree } = evt.data;
 
-          for (const file in depTree) {
+          // we will use this to transpile and evaluate only changed files and the files that uses it
+          this.depTree = depTree;
+
+          for (const file in filesToTranspile) {
             this.transpiledFiles[file] = await this.transpile(file);
           }
 
@@ -96,8 +116,12 @@ class Bundler {
             plugin(this.files);
           });
 
+          depResolverWorker.terminate();
+
           resolve();
         } catch (err) {
+          depResolverWorker.terminate();
+
           reject(err);
         }
       });
