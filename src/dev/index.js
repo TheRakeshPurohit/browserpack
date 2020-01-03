@@ -33,7 +33,7 @@ const hellojs = `
 
 const welcomejs = `
   export function welcome(name) {
-    console.log(\`Welcome \${name}\`);
+    document.getElementById('title').innerHTML = \`Welcome \${name}\`;
   }
 `;
 
@@ -65,23 +65,10 @@ const bundler = new Bundler({
   ]
 });
 
-bundler.bundle().then(() => {
-  setTimeout(() => {
-    bundler.update(
-      './css/index.css',
-      `
-      h1{
-        color: red;
-      }
-    `
-    );
-    bundler.update(
-      './modules/welcome.js',
-      `
-      export function welcome(name) {
-        console.log(\`Welcome edited \${name}\`);
-      }
-    `
-    );
-  }, 3000);
-});
+bundler.bundle();
+
+const txt = document.getElementById('updated-code');
+
+txt.value = welcomejs;
+
+setInterval(() => bundler.update('./modules/welcome.js', txt.value), 2000);
