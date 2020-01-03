@@ -1,4 +1,5 @@
 import { name } from '../../package.json';
+import { downloadPackage } from './package-resolver';
 import evaluate from './eval';
 
 class Bundler {
@@ -10,6 +11,24 @@ class Bundler {
     this.transpiledFiles = {};
     this.depTree = {};
     this.plugins = config.plugins || [];
+    this.packages = config.packages || {};
+  }
+
+  async syncPackages() {
+    const downloadPromises = [];
+
+    for (const packageName in this.packages) {
+      downloadPromises.push(downloadPackage(this.packages[packageName]));
+    }
+
+    await Promise.all(downloadPromises).then((packages) => {
+      let i = 0;
+
+      for (const packageName in this.packages) {
+        this.files[packageName] = packages[i];
+        i++;
+      }
+    });
   }
 
   async update(fileName, updatedSource) {
@@ -29,6 +48,10 @@ class Bundler {
   }
 
   async transpile(sourceFile) {
+    if (!sourceFile.replace('./', '').includes('.')) {
+      sourceFile = `${sourceFile}.js`;
+    }
+
     let source = this.files[sourceFile];
 
     if (source === undefined) {
@@ -78,7 +101,9 @@ class Bundler {
     });
   }
 
-  bundle() {
+  async bundle() {
+    await this.syncPackages();
+
     const entryPointFile = this.files[this.entryPoint];
 
     if (entryPointFile === undefined) {

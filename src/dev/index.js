@@ -15,19 +15,37 @@ const indexCss = `
 `;
 
 const mainjs = `
-  import { hello } from './hello.js';
-  import { welcome } from './modules/welcome.js';
+  import { welcome } from './modules/welcome';
   import JSON from './jsons/user.json';
+  import { h, render } from 'preact';
+  import { Counter } from './components/counter';
   import './css/index.css';
-  
-  hello();
-  welcome('Ameer');
-  console.log(JSON);
+
+  welcome(JSON.name);
+  const container = document.getElementById('preact-root');
+
+  render(<Counter />, container, container.firstChild);
 `;
 
-const hellojs = `
-  export function hello(name) {
-    console.log('hello from module');
+const counterjs = `
+  import { h, Component } from 'preact';
+
+  export class Counter extends Component {
+    constructor(props) {
+      super(props)
+
+      this.state = {
+        count: 0
+      }
+
+      setInterval(() => {
+        this.setState({ count: this.state.count + 1 });
+      }, 1000);
+    }
+
+    render() {
+      return <p>Preact Counter: {this.state.count}</p>;
+    }
   }
 `;
 
@@ -40,7 +58,7 @@ const welcomejs = `
 const files = {
   './main.js': mainjs,
   './css/index.css': indexCss,
-  './hello.js': hellojs,
+  './components/counter.js': counterjs,
   './modules/welcome.js': welcomejs,
   './jsons/user.json': userJSON
 };
@@ -62,13 +80,10 @@ const bundler = new Bundler({
       test: /\.css?$/,
       loaders: [cssLoader]
     }
-  ]
+  ],
+  packages: {
+    'preact.js': 'https://unpkg.com/preact@2.8.2/dist/preact.js'
+  }
 });
 
 bundler.bundle();
-
-const txt = document.getElementById('updated-code');
-
-txt.value = welcomejs;
-
-setInterval(() => bundler.update('./modules/welcome.js', txt.value), 2000);

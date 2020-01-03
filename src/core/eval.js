@@ -7,7 +7,14 @@ export default function evaluate(file, files) {
   /* eslint-disable no-undef */
   module = { exports };
   /* eslint-disable no-undef */
-  require = (module) => evaluate(module, files);
+  require = (module) => {
+    // ./hello.js -> hello.js (which has extension it has .)
+    if (!module.replace('./', '').includes('.')) {
+      module = `${module}.js`;
+    }
+
+    return evaluate(module, files);
+  };
 
   eval(files[file]);
 
