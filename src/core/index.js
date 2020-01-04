@@ -1,6 +1,7 @@
 import { name } from '../../package.json';
 import { downloadPackage } from '../package-resolver/package-resolver';
 import evaluate from './eval';
+import { babelLoader, cssLoader, jsonLoader } from '../loaders';
 
 class Bundler {
   constructor(config) {
@@ -12,6 +13,21 @@ class Bundler {
     this.depTree = {};
     this.plugins = config.plugins || [];
     this.packages = config.packages || {};
+    this.rules = [
+      ...this.rules,
+      {
+        test: /\.js?$/,
+        loaders: [babelLoader]
+      },
+      {
+        test: /\.json?$/,
+        loaders: [jsonLoader, babelLoader]
+      },
+      {
+        test: /\.css?$/,
+        loaders: [cssLoader]
+      }
+    ];
   }
 
   async syncPackages() {

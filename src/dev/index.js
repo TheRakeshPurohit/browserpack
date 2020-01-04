@@ -34,22 +34,7 @@ const files = {
 
 const bundler = new Bundler({
   entry: './main.js',
-  files,
-  defaultExt: 'js',
-  rules: [
-    {
-      test: /\.js?$/,
-      loaders: [babelLoader]
-    },
-    {
-      test: /\.json?$/,
-      loaders: [jsonLoader, babelLoader]
-    },
-    {
-      test: /\.css?$/,
-      loaders: [cssLoader]
-    }
-  ]
+  files
 });
 
 bundler.bundle();
