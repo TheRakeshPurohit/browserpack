@@ -1,6 +1,6 @@
 {
   "name": "browserpack",
-  "version": "0.0.0-beta",
+  "version": "0.0.0",
   "description": "hackable browser based bundler inspired from webpack",
   "main": "index.js",
   "scripts": {
