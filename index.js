@@ -1,3 +1,4 @@
 import Bundler from './src/core';
+import { babelLoader, cssLoader, jsonLoader } from './src/loaders';
 
-export default Bundler;
+export { babelLoader, cssLoader, jsonLoader, Bundler };
