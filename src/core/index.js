@@ -1,5 +1,5 @@
 import { name } from '../../package.json';
-import { downloadPackage } from './package-resolver';
+import { downloadPackage } from '../package-resolver/package-resolver';
 import evaluate from './eval';
 
 class Bundler {
