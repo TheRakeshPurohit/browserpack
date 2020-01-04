@@ -1,3 +1,3 @@
 import cssLoader from './css';
 
-export { cssLoader };
+export default cssLoader;

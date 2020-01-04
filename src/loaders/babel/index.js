@@ -1,3 +1,3 @@
 import babelLoader from './babel';
 
-export { babelLoader };
+export default babelLoader;

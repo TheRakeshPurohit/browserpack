@@ -1,3 +1,3 @@
 import jsonLoader from './json';
 
-export { jsonLoader };
+export default jsonLoader;

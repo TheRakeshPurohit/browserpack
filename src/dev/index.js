@@ -1,7 +1,5 @@
 import Bundler from '../../index';
-import { babelLoader } from '../loaders/babel';
-import { jsonLoader } from '../loaders/json';
-import { cssLoader } from '../loaders/css';
+import { babelLoader, jsonLoader, cssLoader } from '../loaders';
 
 const userJSON = `{
   "name": "Ameer",
