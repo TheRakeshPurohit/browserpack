@@ -3,7 +3,7 @@ if [ -z $(git status -s) ]; then
   cp package.json dist/
   cp README.md dist/   
   cp LICENSE dist/
-  npm publish dist
+  npm publish dist --access=public
 else 
   echo "Can't publish git is not clean"
   exit 1;
